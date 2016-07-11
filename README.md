@@ -49,6 +49,19 @@ pushyAPI.sendPushNotification(data, tokens, options, function (err, id) {
 });
 ```
 
+Alternatively, send the notification using promises:
+
+```js
+pushyAPI.sendPushNotification(data, tokens, options)
+    .then(function (id) {
+        // Log success
+        console.log('Push sent successfully! (ID: ' + id + ')');
+    }).catch(function (err) {
+        // Log errors to console
+        return console.log(err);
+    });
+```
+
 Make sure to replace `SECRET_API_KEY` with your app's Secret API Key, which you can find in the [Developer Dashboard](https://app.pushy.me/). 
 
 ## License
