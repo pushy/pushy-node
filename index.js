@@ -71,16 +71,12 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
             return reject(new Error('Please provide the callback parameter as a function.'));
         }
 
-        // Prepare JSON post data
-        var postData = {
-            data: data,
-            registration_ids: tokens
-        };
+        // Prepare JSON post data (defaults to options object)
+        var postData = options;
 
-        // Developer provided TTL via options?
-        if (options.time_to_live) {
-            postData.time_to_live = options.time_to_live;
-        }
+        // Set payload and registration IDs
+        postData.data = data;
+        postData.registration_ids = tokens;
 
         // Send push using the "request" package
         request({
