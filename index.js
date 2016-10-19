@@ -36,7 +36,7 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
         }
 
         // Data must be an object
-        if (typeof data !== 'object') {
+        if ((Object.prototype.toString.call(data) !== '[object Object]')) {
             return reject(new Error('Please provide the push payload as an object.'));
         }
 
@@ -62,7 +62,7 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
         }
 
         // Options must be an object
-        if (typeof options !== 'object') {
+        if (Object.prototype.toString.call(options) !== '[object Object]') {
             return reject(new Error('Please provide the options parameter as an object.'));
         }
 
