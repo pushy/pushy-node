@@ -1,6 +1,6 @@
 {
   "name": "pushy-node",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "The official Node.js package for sending push notifications with Pushy.",
   "main": "index.js",
   "scripts": {

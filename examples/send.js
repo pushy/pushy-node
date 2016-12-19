@@ -2,7 +2,7 @@
 var Pushy = require('../');
 
 // Plug in your Secret API Key
-// Get it here: https://app.pushy.me/
+// Get it here: https://dashboard.pushy.me/
 var pushyAPI = new Pushy('SECRET_API_KEY');
 
 // Set push payload data to deliver to device(s)
@@ -20,7 +20,7 @@ var options = {
 };
 
 // Send push notification via the Push Notifications API
-// https://pushy.me/docs/api/push-notifications
+// https://pushy.me/docs/api/send-notifications
 pushyAPI.sendPushNotification(data, tokens, options, function (err, id) {
     // Log errors to console
     if (err) {
