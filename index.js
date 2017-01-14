@@ -42,7 +42,7 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
 
         // No tokens provided?
         if (!tokens) {
-            return reject(new Error('Please provide the device registration IDs.'));
+            return reject(new Error('Please provide the device tokens.'));
         }
 
         // Token provided as string?
@@ -53,12 +53,12 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
 
         // Tokens must be an array
         if (tokens.constructor !== Array) {
-            return reject(new Error('Please provide the device registration IDs as an array of strings.'));
+            return reject(new Error('Please provide the device tokens as an array of strings.'));
         }
 
         // Require at least one token
         if (tokens.length === 0) {
-            return reject(new Error('Please provide at least one device registration ID.'));
+            return reject(new Error('Please provide at least one device token.'));
         }
 
         // Options must be an object
@@ -74,7 +74,7 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
         // Prepare JSON post data (defaults to options object)
         var postData = options;
 
-        // Set payload and registration IDs
+        // Set payload and device tokens
         postData.data = data;
         postData.tokens = tokens;
 
