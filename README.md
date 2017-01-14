@@ -28,7 +28,7 @@ var data = {
 };
 
 // Insert target device token(s) here
-var tokens = ['DEVICE_REGISTRATION_ID'];
+var tokens = ['DEVICE_TOKEN'];
 
 // Set optional push notification options (such as TTL)
 var options = {

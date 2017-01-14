@@ -76,7 +76,7 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
 
         // Set payload and registration IDs
         postData.data = data;
-        postData.registration_ids = tokens;
+        postData.tokens = tokens;
 
         // Send push using the "request" package
         request({
