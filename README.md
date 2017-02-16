@@ -5,6 +5,8 @@ The official Node.js package for sending push notifications with [Pushy](https:/
 
 > [Pushy](https://pushy.me/) is the most reliable push notification gateway, perfect for real-time, mission-critical applications.
 
+**Note:** If you don't have an existing Node.js project, consider checking out [pushy-node-backend](https://github.com/pushy-me/pushy-node-backend) as a starting point to make things easier for you.
+
 ## Usage
 
 First, install the package using npm:
