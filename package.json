@@ -1,5 +1,5 @@
 {
-  "name": "pushy-node",
+  "name": "pushy",
   "version": "1.0.9",
   "description": "The official Node.js package for sending push notifications with Pushy.",
   "main": "index.js",
