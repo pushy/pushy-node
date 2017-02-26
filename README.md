@@ -1,5 +1,5 @@
 # pushy-node
-[![npm version](https://badge.fury.io/js/pushy-node.svg)](https://www.npmjs.com/package/pushy-node)
+[![npm version](https://badge.fury.io/js/pushy.svg)](https://www.npmjs.com/package/pushy)
 
 The official Node.js package for sending push notifications with [Pushy](https://pushy.me/).
 
@@ -12,13 +12,13 @@ The official Node.js package for sending push notifications with [Pushy](https:/
 First, install the package using npm:
 
 ```shell
-npm install pushy-node --save
+npm install pushy --save
 ```
 
 Then, use the following sample code to send a push notification to target devices:
 
 ```js
-var Pushy = require('pushy-node');
+var Pushy = require('pushy');
 
 // Plug in your Secret API Key
 // Get it here: https://dashboard.pushy.me/

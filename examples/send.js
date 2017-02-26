@@ -1,4 +1,4 @@
-// Change to 'pushy-node' to use this code in your own project
+// Change to require('pushy') to use this code in your own project
 var Pushy = require('../');
 
 // Plug in your Secret API Key
