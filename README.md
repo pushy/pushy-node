@@ -32,13 +32,16 @@ var data = {
 // Insert target device token(s) here
 var tokens = ['DEVICE_TOKEN'];
 
-// Set optional push notification options (such as TTL)
+// Set optional push notification options (such as iOS notification fields)
 var options = {
-    // Set the notification to expire if not delivered within 30 seconds
-    time_to_live: 30
+    notification: {
+        badge: 1,
+        sound: 'ping.aiff',
+        body: 'Hello World \u270c'
+    },
 };
 
-// Send push notification via the Push Notifications API
+// Send push notification via the Send Notifications API
 // https://pushy.me/docs/api/send-notifications
 pushyAPI.sendPushNotification(data, tokens, options, function (err, id) {
     // Log errors to console
