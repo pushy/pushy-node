@@ -65,11 +65,6 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
             return reject(new Error('Please provide the notification recipient as a string or an array of strings.'));
         }
 
-        // Require at least one token
-        if (recipient.length === 0) {
-            return reject(new Error('Please provide at least one device token.'));
-        }
-
         // Options must be an object
         if (Object.prototype.toString.call(options) !== '[object Object]') {
             return reject(new Error('Please provide the options parameter as an object.'));
