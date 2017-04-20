@@ -18,7 +18,7 @@ function Pushy(apiKey) {
 }
 
 // Main package function
-Pushy.prototype.sendPushNotification = function (data, tokens, options, callback) {
+Pushy.prototype.sendPushNotification = function (data, recipient, options, callback) {
     // Keep track of instance 'this'
     var that = this;
 
@@ -40,24 +40,33 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
             return reject(new Error('Please provide the push payload as an object.'));
         }
 
-        // No tokens provided?
-        if (!tokens) {
-            return reject(new Error('Please provide the device tokens.'));
+        // No recipient provided?
+        if (!recipient) {
+            return reject(new Error('Please provide the notification recipient.'));
         }
 
-        // Token provided as string?
-        if (typeof tokens === 'string') {
-            // Convert to string array 
-            tokens = [tokens];
-        }
+        // Prepare JSON post data (defaults to options object)
+        var postData = options;
 
-        // Tokens must be an array
-        if (tokens.constructor !== Array) {
-            return reject(new Error('Please provide the device tokens as an array of strings.'));
+        // Set payload and device tokens
+        postData.data = data;
+
+        // Recipient provided as string?
+        if (typeof recipient === 'string') {
+            // Set "to" parameter
+            postData.to = recipient;
+        }
+        else if (Array.isArray(recipient)) {
+            // Set "tokens" parameter
+            postData.tokens = recipient;
+        }
+        else {
+            // Invalid recipient type
+            return reject(new Error('Please provide the notification recipient as a string or an array of strings.'));
         }
 
         // Require at least one token
-        if (tokens.length === 0) {
+        if (recipient.length === 0) {
             return reject(new Error('Please provide at least one device token.'));
         }
 
@@ -70,13 +79,6 @@ Pushy.prototype.sendPushNotification = function (data, tokens, options, callback
         if (callback && typeof callback !== 'function') {
             return reject(new Error('Please provide the callback parameter as a function.'));
         }
-
-        // Prepare JSON post data (defaults to options object)
-        var postData = options;
-
-        // Set payload and device tokens
-        postData.data = data;
-        postData.tokens = tokens;
 
         // Send push using the "request" package
         request({
