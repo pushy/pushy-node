@@ -87,19 +87,15 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
                 return reject(err);
             }
 
-            if (!body) {
-                return reject(new Error('An invalid response body was received from the Pushy API.'));
+            // Check for 200 OK
+            if (res.statusCode != 200) {
+                return reject(new Error('An invalid response was received from the Pushy API.'));
             }
 
             // Pushy error?
             if (body.error) {
                 // Send to callback
                 return reject(new Error(body.error));
-            }
-
-            // Check for 200 OK
-            if (res.statusCode != 200) {
-                return reject(new Error('An invalid response was received from the Pushy API.'));
             }
 
             // Fetch push notification ID
