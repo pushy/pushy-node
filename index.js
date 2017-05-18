@@ -87,6 +87,10 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
                 return reject(err);
             }
 
+            if (!body) {
+                return reject(new Error('An invalid response body was received from the Pushy API.'));
+            }
+
             // Pushy error?
             if (body.error) {
                 // Send to callback
