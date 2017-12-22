@@ -1,6 +1,9 @@
 var request = require('request');
 var Promise = require('bluebird');
 
+// Pushy API endpoint
+var apiEndpoint = 'https://api.pushy.me';
+
 // Package constructor
 function Pushy(apiKey) {
     // Make sure the developer provided his/her API key
@@ -77,7 +80,7 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
 
         // Send push using the "request" package
         request({
-            uri: 'https://api.pushy.me/push?api_key=' + that.apiKey,
+            uri: that.getApiEndpoint() + '/push?api_key=' + that.apiKey,
             method: 'POST',
             json: postData
         }, function (err, res, body) {
@@ -117,6 +120,16 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
         });
     });
 };
+
+// Support for Pushy Enterprise
+Pushy.prototype.setEnterpriseConfig = function (endpoint) {
+    this.enterpriseEndpoint = endpoint;
+}
+
+// API endpoint selector
+Pushy.prototype.getApiEndpoint = function () {
+    return (this.enterpriseEndpoint) ? this.enterpriseEndpoint : apiEndpoint;
+}
 
 // Expose the Pushy object
 module.exports = Pushy;
