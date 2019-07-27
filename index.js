@@ -48,6 +48,11 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
             return reject(new Error('Please provide the notification recipient.'));
         }
 
+        // Options must be an object
+        if (Object.prototype.toString.call(options) !== '[object Object]') {
+            return reject(new Error('Please provide the options parameter as an object.'));
+        }
+        
         // Prepare JSON post data (defaults to options object)
         var postData = options;
 
@@ -66,11 +71,6 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
         else {
             // Invalid recipient type
             return reject(new Error('Please provide the notification recipient as a string or an array of strings.'));
-        }
-
-        // Options must be an object
-        if (Object.prototype.toString.call(options) !== '[object Object]') {
-            return reject(new Error('Please provide the options parameter as an object.'));
         }
 
         // Callback must be a function (if provided)
