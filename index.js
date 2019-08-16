@@ -83,7 +83,7 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
             uri: that.getApiEndpoint() + '/push?api_key=' + that.apiKey,
             method: 'POST',
             json: postData
-        }, this.extraRequestOptions || {}), function (err, res, body) {
+        }, that.extraRequestOptions || {}), function (err, res, body) {
             // Request error?
             if (err) {
                 // Send to callback
