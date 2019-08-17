@@ -79,11 +79,11 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
         }
 
         // Send push using the "request" package
-        request({
+        request(Object.assign({
             uri: that.getApiEndpoint() + '/push?api_key=' + that.apiKey,
             method: 'POST',
             json: postData
-        }, function (err, res, body) {
+        }, that.extraRequestOptions || {}), function (err, res, body) {
             // Request error?
             if (err) {
                 // Send to callback
@@ -129,6 +129,11 @@ Pushy.prototype.setEnterpriseConfig = function (endpoint) {
 // API endpoint selector
 Pushy.prototype.getApiEndpoint = function () {
     return (this.enterpriseEndpoint) ? this.enterpriseEndpoint : apiEndpoint;
+}
+
+// Add extra options that will be passed to the request library
+Pushy.prototype.setExtraRequestOptions = function (extraRequestOptions) {
+    this.extraRequestOptions = extraRequestOptions;
 }
 
 // Expose the Pushy object
