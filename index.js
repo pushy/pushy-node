@@ -25,6 +25,9 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
     // Keep track of instance 'this'
     var that = this;
 
+    // Support empty options
+    options = options || {};
+
     // Always return a promise
     return new Promise(function (resolve, reject) {
         // Custom callback provided?
