@@ -20,7 +20,7 @@ function Pushy(apiKey) {
     this.apiKey = apiKey;
 }
 
-// Main package function
+// Send Notifications API
 Pushy.prototype.sendPushNotification = function (data, recipient, options, callback) {
     // Keep track of instance 'this'
     var that = this;
@@ -124,6 +124,7 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
     });
 };
 
+// Notification Deletion API
 Pushy.prototype.deletePushNotification = function (pushId, callback) {
     // Keep track of instance 'this'
     var that = this;
@@ -138,11 +139,11 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
 
         // No pushId provided?
         if (!pushId) {
-            return reject(new Error('Please provide the notification ID you wish to remove.'));
+            return reject(new Error('Please provide the notification ID you wish to delete.'));
         }
 
         // pushId must be an string
-        if (typeof pushId != 'string') {
+        if (typeof pushId !== 'string') {
             return reject(new Error('Please provide the notification ID as a string.'));
         }
 
@@ -169,7 +170,7 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
 
             // Callback?
             if (callback) {
-                // Pass push ID to callback with a null error
+                // Invoke callback with a null error
                 callback(null);
             }
             else {

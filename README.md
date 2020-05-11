@@ -69,6 +69,25 @@ pushy.sendPushNotification(data, tokens, options)
 
 Make sure to replace `SECRET_API_KEY` with your app's Secret API Key listed in the [Dashboard](https://dashboard.pushy.me/). 
 
+---
+
+To delete a notification (using the [Notification Deletion API](https://pushy.me/docs/api/notification-deletion)):
+
+```js
+// Enter unique push ID returned from pushy.sendPushNotification()
+var pushId = '5ea9b214b47cad768a35f13a';
+
+// Delete the notification
+pushy.deletePushNotification(pushId)
+    .then(function (id) {
+        // Log success
+        console.log('Push deleted successfully!');
+    }).catch(function (err) {
+        // Log errors to console
+        return console.log(err);
+    });
+```
+
 ## License
 
 [Apache 2.0](LICENSE)
