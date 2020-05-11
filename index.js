@@ -124,6 +124,62 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
     });
 };
 
+Pushy.prototype.deletePushNotification = function (pushId, callback) {
+    // Keep track of instance 'this'
+    var that = this;
+
+    // Always return a promise
+    return new Promise(function (resolve, reject) {
+        // Custom callback provided?
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // No pushId provided?
+        if (!pushId) {
+            return reject(new Error('Please provide the notification ID you wish to remove.'));
+        }
+
+        // pushId must be an String
+        if (typeof(pushId) != String) {
+            return reject(new Error('Please provide the notification ID as a string.'));
+        }
+
+        // Callback must be a function (if provided)
+        if (callback && typeof callback !== 'function') {
+            return reject(new Error('Please provide the callback parameter as a function.'));
+        }
+
+        // Delete push using the "request" package
+        request(Object.assign({
+            uri: that.getApiEndpoint() + '/pushes/' + pushId + '?api_key=' + that.apiKey,
+            method: 'DELETE',
+        }, that.extraRequestOptions || {}), function (err, res, body) {
+            // Request error?
+            if (err) {
+                // Send to callback
+                return reject(err);
+            }
+
+            // Check for 200 OK
+            if (res.statusCode != 200) {
+                return reject(new Error('An invalid response code was received from the Pushy API.'));
+            }
+
+            // Callback?
+            if (callback) {
+                // Pass push ID to callback with a null error
+                callback(null);
+            }
+            else {
+                // Resolve the promise
+                resolve();
+            }
+        });
+    });
+};
+
 // Support for Pushy Enterprise
 Pushy.prototype.setEnterpriseConfig = function (endpoint) {
     this.enterpriseEndpoint = endpoint;
