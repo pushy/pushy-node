@@ -141,8 +141,8 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
             return reject(new Error('Please provide the notification ID you wish to remove.'));
         }
 
-        // pushId must be an String
-        if (typeof(pushId) != String) {
+        // pushId must be an string
+        if (typeof pushId != 'string') {
             return reject(new Error('Please provide the notification ID as a string.'));
         }
 
