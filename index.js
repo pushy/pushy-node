@@ -63,13 +63,9 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
         postData.data = data;
 
         // Recipient provided as string?
-        if (typeof recipient === 'string') {
+        if (typeof recipient === 'string' || Array.isArray(recipient)) {
             // Set "to" parameter
             postData.to = recipient;
-        }
-        else if (Array.isArray(recipient)) {
-            // Set "tokens" parameter
-            postData.tokens = recipient;
         }
         else {
             // Invalid recipient type
