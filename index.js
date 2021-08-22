@@ -177,6 +177,138 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
     });
 };
 
+/**
+ * Get the device tokens how subscribes the provided topic
+ * @param {String} topic - The topic to fetch the subscribers for
+ * @param {Function} callback - This call back functions should be invoked with the returned body from pushy.
+ * @return {Promise}
+ */
+Pushy.prototype.getTopicSubscribers = function (topic, callback) {
+    // Keep track of instance 'this'
+    var that = this;
+
+    return new Promise((resolve, reject) => {
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // Check the validity of topic
+        if (!topic || typeof topic !== 'string') {
+            return reject(new Error('Invalid topic name'));
+        }
+
+        // Build the endpoint URI.
+        var endPoint = that.getApiEndpoint() + '/topics/' + topic + '?api_key=' + that.apiKey;
+
+        // Make the request
+        request.get(endPoint, that.extraRequestOptions, function (err, res, body) {
+
+            // Request error?
+            if (err) {
+                // Send to callback
+                return reject(err);
+            }
+            // Check for 200 OK
+            if (res.statusCode != 200) {
+                return reject(new Error('An invalid response code was received from the Pushy API.'));
+            }
+
+            // Callback?
+            if (callback) {
+                // Invoke callback with a body
+                callback(null, res.body);
+            }
+            else {
+                // Resolve the promise
+                resolve(body);
+            }
+        });
+    });
+}
+
+/**
+ * Add provided token to subscribers list of a certain topic or a list of topics
+ * @param {Array | String} topics
+ * @param {String} token
+ * @param {Function} callback
+ * @returns {Promise}
+ */
+Pushy.prototype.subscribeTopics = function (topics, token,  callback) {
+    var that = this;
+
+    return new Promise(function (resolve, reject) {
+
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // Build the endpoint URI.
+        var endPoint = that.getApiEndpoint() + '/topics/subscribe/' + '?api_key=' + that.apiKey;
+
+        var postBody = {};
+
+        // Check topics and add it to the body.
+        if (Array.isArray(topics)) {
+            postBody.topics = topics;
+        } else if (typeof topics === 'string') {
+            postBody.topics = [topics]
+        } else {
+            return reject(new Error('[Invalid topics argument] Topics should be an array or a single topic string.'));
+        }
+
+        // Check token
+        if (typeof token !== 'string') {
+            reject(new Error('Invalid token'));
+        }
+
+        // add token to the post body
+        postBody.token = token;
+
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'POST',
+                json: postBody
+            }, that.extraRequestOptions || {}), function (err, res, body) {
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
+
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
+
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
+
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
+
+                // Callback?
+                if (callback) {
+                    // Pass push ID to callback with a null error
+                    callback(null);
+                }
+                else {
+                    // Resolve the promise
+                    resolve();
+                }
+            });
+
+   })
+
+
+}
+
 // Support for Pushy Enterprise
 Pushy.prototype.setEnterpriseConfig = function (endpoint) {
     this.enterpriseEndpoint = endpoint;
