@@ -228,6 +228,50 @@ Pushy.prototype.getTopicSubscribers = function (topic, callback) {
 }
 
 /**
+ * Get all topics in your app with the number of subscribers of each topic
+ * @param {Function} callback - This call back functions should be invoked with the returned body from pushy.
+ * @return {Promise}
+ */
+Pushy.prototype.getTopics = function (callback) {
+    // Keep track of instance 'this'
+    var that = this;
+
+    return new Promise((resolve, reject) => {
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // Build the endpoint URI.
+        var endPoint = that.getApiEndpoint() + '/topics/' + '?api_key=' + that.apiKey;
+
+        // Make the request
+        request.get(endPoint, that.extraRequestOptions, function (err, res, body) {
+
+            // Request error?
+            if (err) {
+                // Send to callback
+                return reject(err);
+            }
+            // Check for 200 OK
+            if (res.statusCode != 200) {
+                return reject(new Error('An invalid response code was received from the Pushy API.'));
+            }
+
+            // Callback?
+            if (callback) {
+                // Invoke callback with a body
+                callback(null, res.body);
+            }
+            else {
+                // Resolve the promise
+                resolve(body);
+            }
+        });
+    });
+}
+
+/**
  * Add provided token to subscribers list of a certain topic or a list of topics
  * @param {Array | String} topics
  * @param {String} token
@@ -246,6 +290,88 @@ Pushy.prototype.subscribeTopics = function (topics, token,  callback) {
 
         // Build the endpoint URI.
         var endPoint = that.getApiEndpoint() + '/topics/subscribe/' + '?api_key=' + that.apiKey;
+
+        var postBody = {};
+
+        // Check topics and add it to the body.
+        if (Array.isArray(topics)) {
+            postBody.topics = topics;
+        } else if (typeof topics === 'string') {
+            postBody.topics = [topics]
+        } else {
+            return reject(new Error('[Invalid topics argument] Topics should be an array or a single topic string.'));
+        }
+
+        // Check token
+        if (typeof token !== 'string') {
+            reject(new Error('Invalid token'));
+        }
+
+        // add token to the post body
+        postBody.token = token;
+
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'POST',
+                json: postBody
+            }, that.extraRequestOptions || {}), function (err, res, body) {
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
+
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
+
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
+
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
+
+                // Callback?
+                if (callback) {
+                    // Pass push ID to callback with a null error
+                    callback(null);
+                }
+                else {
+                    // Resolve the promise
+                    resolve();
+                }
+            });
+
+   })
+
+
+}
+
+/**
+ * Remove provided token to subscribers list of a certain topic or a list of topics
+ * @param {Array | String} topics
+ * @param {String} token
+ * @param {Function} callback
+ * @returns {Promise}
+ */
+Pushy.prototype.unsubscribeTopics = function (topics, token,  callback) {
+    var that = this;
+
+    return new Promise(function (resolve, reject) {
+
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // Build the endpoint URI.
+        var endPoint = that.getApiEndpoint() + '/topics/unsubscribe/' + '?api_key=' + that.apiKey;
 
         var postBody = {};
 
