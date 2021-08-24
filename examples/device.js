@@ -18,3 +18,13 @@ pushy.getDeviceInfo('DEVICE_TOKEN', (err, deviceInfo) => {
     // Log Device Information
     console.log('Device Info: ', deviceInfo);
 });
+
+pushy.getDevicesPresence(['DEVICE_TOKEN'], (err, devicesInfo) => {
+    // Log errors to console
+    if (err) {
+        console.log(err);
+    }
+
+    // Log Device Information
+    console.log('Device Info: ', devicesInfo);
+});
