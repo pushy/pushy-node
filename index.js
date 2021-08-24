@@ -159,6 +159,16 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
                 return reject(err);
             }
 
+            // Missing body?
+            if (!body) {
+                return reject(new Error('An empty body was received from the Pushy API.'));
+            }
+
+            // Pushy error?
+            if (body.error) {
+                return reject(new Error(body.error));
+            }
+
             // Check for 200 OK
             if (res.statusCode != 200) {
                 return reject(new Error('An invalid response code was received from the Pushy API.'));
@@ -177,17 +187,14 @@ Pushy.prototype.deletePushNotification = function (pushId, callback) {
     });
 };
 
-/**
- * Get the device tokens how subscribes the provided topic
- * @param {String} topic - The topic to fetch the subscribers for
- * @param {Function} callback - This call back functions should be invoked with the returned body from pushy.
- * @return {Promise}
- */
-Pushy.prototype.getTopicSubscribers = function (topic, callback) {
+// Pub/Sub Subscribers API
+Pushy.prototype.getSubscribers = function (topic, callback) {
     // Keep track of instance 'this'
     var that = this;
 
+    // Always return a promise
     return new Promise((resolve, reject) => {
+        // Custom callback provided?
         if (callback) {
             resolve = callback;
             reject = callback;
@@ -198,26 +205,44 @@ Pushy.prototype.getTopicSubscribers = function (topic, callback) {
             return reject(new Error('Invalid topic name'));
         }
 
-        // Build the endpoint URI.
+        // Build URL to Pub/Sub Subscribers API
         var endPoint = that.getApiEndpoint() + '/topics/' + topic + '?api_key=' + that.apiKey;
 
         // Make the request
-        request.get(endPoint, that.extraRequestOptions, function (err, res, body) {
-
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'GET',
+                json: true
+            }, that.extraRequestOptions || {}), function (err, res, body) {
             // Request error?
             if (err) {
                 // Send to callback
                 return reject(err);
             }
+            
+            // Missing body?
+            if (!body) {
+                return reject(new Error('An empty body was received from the Pushy API.'));
+            }
+
+            // Pushy error?
+            if (body.error) {
+                return reject(new Error(body.error));
+            }
+
             // Check for 200 OK
             if (res.statusCode != 200) {
                 return reject(new Error('An invalid response code was received from the Pushy API.'));
             }
 
+            // Fetch result
+            var subscribers = body.subscribers;
+
             // Callback?
             if (callback) {
-                // Invoke callback with a body
-                callback(null, res.body);
+                // Invoke callback with subscribers list
+                callback(null, subscribers);
             }
             else {
                 // Resolve the promise
@@ -227,41 +252,57 @@ Pushy.prototype.getTopicSubscribers = function (topic, callback) {
     });
 }
 
-/**
- * Get all topics in your app with the number of subscribers of each topic
- * @param {Function} callback - This call back functions should be invoked with the returned body from pushy.
- * @return {Promise}
- */
+// Pub/Sub Topics API
 Pushy.prototype.getTopics = function (callback) {
     // Keep track of instance 'this'
     var that = this;
 
+    // Always return a promise
     return new Promise((resolve, reject) => {
+        // Custom callback provided?
         if (callback) {
             resolve = callback;
             reject = callback;
         }
 
-        // Build the endpoint URI.
+        // Build URL to Pub/Sub Topics API
         var endPoint = that.getApiEndpoint() + '/topics/' + '?api_key=' + that.apiKey;
 
         // Make the request
-        request.get(endPoint, that.extraRequestOptions, function (err, res, body) {
-
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'GET',
+                json: true
+            }, that.extraRequestOptions || {}), function (err, res, body) {
             // Request error?
             if (err) {
                 // Send to callback
                 return reject(err);
             }
+            
+            // Missing body?
+            if (!body) {
+                return reject(new Error('An empty body was received from the Pushy API.'));
+            }
+
+            // Pushy error?
+            if (body.error) {
+                return reject(new Error(body.error));
+            }
+
             // Check for 200 OK
             if (res.statusCode != 200) {
                 return reject(new Error('An invalid response code was received from the Pushy API.'));
             }
 
+            // Fetch result
+            var topics = body.topics;
+
             // Callback?
             if (callback) {
-                // Invoke callback with a body
-                callback(null, res.body);
+                // Invoke callback with topics list
+                callback(null, topics);
             }
             else {
                 // Resolve the promise
@@ -271,50 +312,47 @@ Pushy.prototype.getTopics = function (callback) {
     });
 }
 
-/**
- * Add provided token to subscribers list of a certain topic or a list of topics
- * @param {Array | String} topics
- * @param {String} token
- * @param {Function} callback
- * @returns {Promise}
- */
-Pushy.prototype.subscribeTopics = function (topics, token,  callback) {
+// Pub/Sub Subscribe API
+Pushy.prototype.subscribe = function (topics, deviceToken,  callback) {
+    // Keep track of instance 'this'
     var that = this;
 
+    // Always return a promise
     return new Promise(function (resolve, reject) {
-
+        // Custom callback provided?
         if (callback) {
             resolve = callback;
             reject = callback;
         }
 
-        // Build the endpoint URI.
+        // Device token passed in must be a string
+        if (typeof deviceToken !== 'string') {
+            return reject(new Error('Please provide the device token as a string.'));
+        }
+
+        // Topics passed in must be in string or array format
+        if (typeof topics !== 'string' && !Array.isArray(topics)) {
+            return reject(new Error('Please provide the Pub/Sub topics parameter as a string or an array of strings.'));
+        }
+
+        // Build URL to Pub/Sub Subscribe API
         var endPoint = that.getApiEndpoint() + '/topics/subscribe/' + '?api_key=' + that.apiKey;
 
-        var postBody = {};
+        // Prepare JSON post data
+        var postData = {};
 
-        // Check topics and add it to the body.
-        if (Array.isArray(topics)) {
-            postBody.topics = topics;
-        } else if (typeof topics === 'string') {
-            postBody.topics = [topics]
-        } else {
-            return reject(new Error('[Invalid topics argument] Topics should be an array or a single topic string.'));
-        }
+        // Add token to the post body
+        postData.token = deviceToken;
 
-        // Check token
-        if (typeof token !== 'string') {
-            reject(new Error('Invalid token'));
-        }
+        // Convert singular string topic to array
+        postData.topics = Array.isArray(topics) ? topics : [topics];
 
-        // add token to the post body
-        postBody.token = token;
-
+        // Make the request
         request(
             Object.assign({
                 uri: endPoint,
                 method: 'POST',
-                json: postBody
+                json: postData
             }, that.extraRequestOptions || {}), function (err, res, body) {
                 // Request error?
                 if (err) {
@@ -339,64 +377,58 @@ Pushy.prototype.subscribeTopics = function (topics, token,  callback) {
 
                 // Callback?
                 if (callback) {
-                    // Pass push ID to callback with a null error
+                    // Pass null error (success)
                     callback(null);
                 }
                 else {
-                    // Resolve the promise
+                    // Resolve the promise successfully
                     resolve();
                 }
             });
-
-   })
-
-
+   });
 }
 
-/**
- * Remove provided token to subscribers list of a certain topic or a list of topics
- * @param {Array | String} topics
- * @param {String} token
- * @param {Function} callback
- * @returns {Promise}
- */
-Pushy.prototype.unsubscribeTopics = function (topics, token,  callback) {
+// Pub/Sub Unsubscribe API
+Pushy.prototype.unsubscribe = function (topics, deviceToken,  callback) {
+    // Keep track of instance 'this'
     var that = this;
 
+    // Always return a promise
     return new Promise(function (resolve, reject) {
-
+        // Custom callback provided?
         if (callback) {
             resolve = callback;
             reject = callback;
         }
 
-        // Build the endpoint URI.
+        // Device token passed in must be a string
+        if (typeof deviceToken !== 'string') {
+            return reject(new Error('Please provide the device token as a string.'));
+        }
+
+        // Topics passed in must be in string or array format
+        if (typeof topics !== 'string' && !Array.isArray(topics)) {
+            return reject(new Error('Please provide the Pub/Sub topics parameter as a string or an array of strings.'));
+        }
+
+        // Build URL to Pub/Sub Unsubscribe API
         var endPoint = that.getApiEndpoint() + '/topics/unsubscribe/' + '?api_key=' + that.apiKey;
 
-        var postBody = {};
+        // Prepare JSON post data
+        var postData = {};
 
-        // Check topics and add it to the body.
-        if (Array.isArray(topics)) {
-            postBody.topics = topics;
-        } else if (typeof topics === 'string') {
-            postBody.topics = [topics]
-        } else {
-            return reject(new Error('[Invalid topics argument] Topics should be an array or a single topic string.'));
-        }
+        // Add token to the post body
+        postData.token = deviceToken;
 
-        // Check token
-        if (typeof token !== 'string') {
-            reject(new Error('Invalid token'));
-        }
+        // Convert singular string topic to array
+        postData.topics = Array.isArray(topics) ? topics : [topics];
 
-        // add token to the post body
-        postBody.token = token;
-
+        // Make the request
         request(
             Object.assign({
                 uri: endPoint,
                 method: 'POST',
-                json: postBody
+                json: postData
             }, that.extraRequestOptions || {}), function (err, res, body) {
                 // Request error?
                 if (err) {
@@ -418,21 +450,18 @@ Pushy.prototype.unsubscribeTopics = function (topics, token,  callback) {
                 if (res.statusCode != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
-
+                
                 // Callback?
                 if (callback) {
-                    // Pass push ID to callback with a null error
+                    // Pass null error (success)
                     callback(null);
                 }
                 else {
-                    // Resolve the promise
+                    // Resolve the promise successfully
                     resolve();
                 }
             });
-
-   })
-
-
+   });
 }
 
 // Support for Pushy Enterprise
