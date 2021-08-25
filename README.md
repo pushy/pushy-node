@@ -172,6 +172,8 @@ pushy.getDeviceInfo('TOKEN', (err, deviceInfo) => {
     console.log('Device Info: ', deviceInfo);
 });
 ```
+## pushy.getDevicesPresence(devicesTokens)
+
 Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
 
 ```js
