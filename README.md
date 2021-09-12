@@ -156,6 +156,37 @@ pushy.unsubscribe(['news', 'weather'], 'TOKEN', (err) => {
 });
 ```
 
+## pushy.getDeviceInfo(deviceToken)
+Fetch device info, presence, undelivered notifications, and more by device token using [Device Info API](https://pushy.me/docs/api/device).
+
+
+```js
+pushy.getDeviceInfo('TOKEN', (err, deviceInfo) => {
+
+    // Log errors to console
+    if (err) {
+        console.log(err);
+    }
+
+    // Log Device Information
+    console.log('Device Info: ', deviceInfo);
+});
+```
+## pushy.getDevicesPresence(devicesTokens)
+
+Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
+
+```js
+    pushy.getDevicesPresence(['TOKEN'], (err, devicesInfo) => {
+        // Log errors to console
+        if (err) {
+            console.log(err);
+        }
+
+        // Log Device Information
+        console.log('Device Info: ', devicesInfo);
+    });
+```
 ## License
 
 [Apache 2.0](LICENSE)
