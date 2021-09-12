@@ -28,7 +28,7 @@ pushy.getSubscribers('news', (err, subscribers) => {
 });
 
 // Subscribe a device to topics using the Pub/Sub Subscribe API
-pushy.subscribe(['news', 'weather'], 'TOKEN', (err) => {
+pushy.subscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
     // Log errors to console
     if (err) {
         return console.log('Fatal Error', err);
@@ -39,7 +39,7 @@ pushy.subscribe(['news', 'weather'], 'TOKEN', (err) => {
 });
 
 // Unsubscribe a device from topics using the Pub/Sub Unsubscribe API
-pushy.unsubscribe(['news', 'weather'], 'TOKEN', (err) => {
+pushy.unsubscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
     // Log errors to console
     if (err) {
         return console.log('Fatal Error', err);

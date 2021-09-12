@@ -55,7 +55,7 @@ Pushy.prototype.sendPushNotification = function (data, recipient, options, callb
         if (Object.prototype.toString.call(options) !== '[object Object]') {
             return reject(new Error('Please provide the options parameter as an object.'));
         }
-        
+
         // Prepare JSON post data (defaults to options object)
         var postData = options;
 
@@ -215,40 +215,40 @@ Pushy.prototype.getSubscribers = function (topic, callback) {
                 method: 'GET',
                 json: true
             }, that.extraRequestOptions || {}), function (err, res, body) {
-            // Request error?
-            if (err) {
-                // Send to callback
-                return reject(err);
-            }
-            
-            // Missing body?
-            if (!body) {
-                return reject(new Error('An empty body was received from the Pushy API.'));
-            }
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
 
-            // Pushy error?
-            if (body.error) {
-                return reject(new Error(body.error));
-            }
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
 
-            // Check for 200 OK
-            if (res.statusCode != 200) {
-                return reject(new Error('An invalid response code was received from the Pushy API.'));
-            }
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
 
-            // Fetch result
-            var subscribers = body.subscribers;
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
 
-            // Callback?
-            if (callback) {
-                // Invoke callback with subscribers list
-                callback(null, subscribers);
-            }
-            else {
-                // Resolve the promise
-                resolve(body);
-            }
-        });
+                // Fetch result
+                var subscribers = body.subscribers;
+
+                // Callback?
+                if (callback) {
+                    // Invoke callback with subscribers list
+                    callback(null, subscribers);
+                }
+                else {
+                    // Resolve the promise
+                    resolve(body);
+                }
+            });
     });
 }
 
@@ -275,45 +275,45 @@ Pushy.prototype.getTopics = function (callback) {
                 method: 'GET',
                 json: true
             }, that.extraRequestOptions || {}), function (err, res, body) {
-            // Request error?
-            if (err) {
-                // Send to callback
-                return reject(err);
-            }
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
 
-            // Missing body?
-            if (!body) {
-                return reject(new Error('An empty body was received from the Pushy API.'));
-            }
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
 
-            // Pushy error?
-            if (body.error) {
-                return reject(new Error(body.error));
-            }
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
 
-            // Check for 200 OK
-            if (res.statusCode != 200) {
-                return reject(new Error('An invalid response code was received from the Pushy API.'));
-            }
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
 
-            // Fetch result
-            var topics = body.topics;
+                // Fetch result
+                var topics = body.topics;
 
-            // Callback?
-            if (callback) {
-                // Invoke callback with topics list
-                callback(null, topics);
-            }
-            else {
-                // Resolve the promise
-                resolve(body);
-            }
-        });
+                // Callback?
+                if (callback) {
+                    // Invoke callback with topics list
+                    callback(null, topics);
+                }
+                else {
+                    // Resolve the promise
+                    resolve(body);
+                }
+            });
     });
 }
 
 // Pub/Sub Subscribe API
-Pushy.prototype.subscribe = function (topics, deviceToken,  callback) {
+Pushy.prototype.subscribe = function (topics, deviceToken, callback) {
     // Keep track of instance 'this'
     var that = this;
 
@@ -385,11 +385,11 @@ Pushy.prototype.subscribe = function (topics, deviceToken,  callback) {
                     resolve();
                 }
             });
-   });
+    });
 }
 
 // Pub/Sub Unsubscribe API
-Pushy.prototype.unsubscribe = function (topics, deviceToken,  callback) {
+Pushy.prototype.unsubscribe = function (topics, deviceToken, callback) {
     // Keep track of instance 'this'
     var that = this;
 
@@ -450,7 +450,7 @@ Pushy.prototype.unsubscribe = function (topics, deviceToken,  callback) {
                 if (res.statusCode != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
-                
+
                 // Callback?
                 if (callback) {
                     // Pass null error (success)
@@ -461,148 +461,157 @@ Pushy.prototype.unsubscribe = function (topics, deviceToken,  callback) {
                     resolve();
                 }
             });
-   });
+    });
 }
 
 // Device Info API
 Pushy.prototype.getDeviceInfo = function (deviceToken, callback) {
-  // Keep track of instance 'this'
-  var that = this;
+    // Keep track of instance 'this'
+    var that = this;
 
-  // Always return a promise
-  return new Promise((resolve, reject) => {
-    // Custom callback provided?
-    if (callback) {
-        resolve = callback;
-        reject = callback;
-    }
-
-      // Device token passed in must be a string
-    if (typeof deviceToken !== 'string') {
-        return reject(new Error('Please provide the device token as a string.'));
-    }
-
-    // Build URL
-    var endPoint = that.getApiEndpoint() + '/devices/' + deviceToken + '?api_key=' + that.apiKey;
-
-    // Make the request
-    request(
-        Object.assign({
-            uri: endPoint,
-            method: 'GET',
-            json: true
-        }, that.extraRequestOptions || {}), function (err, res, body) {
-        // Request error?
-        if (err) {
-            // Send to callback
-            return reject(err);
-        }
-
-        // Missing body?
-        if (!body) {
-            return reject(new Error('An empty body was received from the Pushy API.'));
-        }
-
-        // Pushy error?
-        if (body.error) {
-            return reject(new Error(body.error));
-        }
-
-        // Check for 200 OK
-        if (res.statusCode != 200) {
-            return reject(new Error('An invalid response code was received from the Pushy API.'));
-        }
-
-        // Fetch result
-        var deviceInfo = body;
-
-        // Callback?
+    // Always return a promise
+    return new Promise((resolve, reject) => {
+        // Custom callback provided?
         if (callback) {
-            // Invoke callback with topics list
-            callback(null, deviceInfo);
+            resolve = callback;
+            reject = callback;
         }
-        else {
-            // Resolve the promise
-            resolve(deviceInfo);
-        }
-    });
-  });
-}
-
-// Check the presence and connectivity status of multiple devices.
-Pushy.prototype.getDevicesPresence = function (devicesTokens, callback) {
-// Keep track of instance 'this'
-var that = this;
-
-// Always return a promise
-return new Promise(function (resolve, reject) {
-    // Custom callback provided?
-    if (callback) {
-        resolve = callback;
-        reject = callback;
-    }
-
-    // Topics passed in must be in string or array format
-    if (!Array.isArray(devicesTokens)) {
-        return reject(new Error('Please provide devices tokens parameter as an array of strings.'));
-
-    }
-
-    // Validate every device token to be a string
-    for (var deviceToken of devicesTokens) {
 
         // Device token passed in must be a string
         if (typeof deviceToken !== 'string') {
             return reject(new Error('Please provide the device token as a string.'));
         }
-    }
-    // Build URL to Pub/Sub Subscribe API
-    var endPoint = that.getApiEndpoint() + '/devices/presence' + '?api_key=' + that.apiKey;
 
-    // Prepare JSON post data
-    var postData = {};
+        // Build URL to Device Info API
+        var endPoint = that.getApiEndpoint() + '/devices/' + deviceToken + '?api_key=' + that.apiKey;
 
-    // Add devices tokens to the post body
-    postData.tokens = [...devicesTokens];
+        // Make the request
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'GET',
+                json: true
+            }, that.extraRequestOptions || {}), function (err, res, body) {
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
 
-    // Make the request
-    request(
-        Object.assign({
-            uri: endPoint,
-            method: 'POST',
-            json: postData
-        }, that.extraRequestOptions || {}), function (err, res, body) {
-            // Request error?
-            if (err) {
-                // Send to callback
-                return reject(err);
-            }
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
 
-            // Missing body?
-            if (!body) {
-                return reject(new Error('An empty body was received from the Pushy API.'));
-            }
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
 
-            // Pushy error?
-            if (body.error) {
-                return reject(new Error(body.error));
-            }
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
 
-            // Check for 200 OK
-            if (res.statusCode != 200) {
-                return reject(new Error('An invalid response code was received from the Pushy API.'));
-            }
+                // Fetch result
+                var deviceInfo = body;
 
-            // Callback?
-            if (callback) {
-                // Pass null error (success)
-                callback(null, body);
+                // Callback?
+                if (callback) {
+                    // Invoke callback with device info result
+                    callback(null, deviceInfo);
+                }
+                else {
+                    // Resolve the promise
+                    resolve(deviceInfo);
+                }
+            });
+    });
+}
+
+// Device Presence API
+Pushy.prototype.getDevicePresence = function (deviceTokens, callback) {
+    // Keep track of instance 'this'
+    var that = this;
+
+    // Always return a promise
+    return new Promise(function (resolve, reject) {
+        // Custom callback provided?
+        if (callback) {
+            resolve = callback;
+            reject = callback;
+        }
+
+        // Topics passed in must be in string or array format
+        if (!Array.isArray(deviceTokens)) {
+            // In case a single token was passed in, convert to array
+            if (typeof deviceTokens === 'string') {
+                deviceTokens = [deviceTokens];
             }
             else {
-                // Resolve the promise successfully
-                resolve(body);
+                // Throw error for all other input types
+                return reject(new Error('Please provide the device token parameter as an array of strings.'));
             }
-        });
+        }
+
+        // Validate every device token to be a string
+        for (var deviceToken of deviceTokens) {
+            // Device token passed in must be a string
+            if (typeof deviceToken !== 'string') {
+                return reject(new Error('Please ensure all device tokens are strings.'));
+            }
+        }
+
+        // Build URL to Device Presence API
+        var endPoint = that.getApiEndpoint() + '/devices/presence' + '?api_key=' + that.apiKey;
+
+        // Prepare JSON post data
+        var postData = {};
+
+        // Add devices tokens to the post body
+        postData.tokens = deviceTokens;
+
+        // Make the request
+        request(
+            Object.assign({
+                uri: endPoint,
+                method: 'POST',
+                json: postData
+            }, that.extraRequestOptions || {}), function (err, res, body) {
+                // Request error?
+                if (err) {
+                    // Send to callback
+                    return reject(err);
+                }
+
+                // Missing body?
+                if (!body) {
+                    return reject(new Error('An empty body was received from the Pushy API.'));
+                }
+
+                // Pushy error?
+                if (body.error) {
+                    return reject(new Error(body.error));
+                }
+
+                // Check for 200 OK
+                if (res.statusCode != 200) {
+                    return reject(new Error('An invalid response code was received from the Pushy API.'));
+                }
+
+                // Fetch result
+                var devicePresence = body;
+
+                // Callback?
+                if (callback) {
+                    // Invoke callback with device presence result
+                    callback(null, devicePresence);
+                }
+                else {
+                    // Resolve the promise
+                    resolve(devicePresence);
+                }
+            });
     });
 }
 

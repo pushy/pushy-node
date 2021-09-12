@@ -129,7 +129,7 @@ pushy.getSubscribers('news', (err, subscribers) => {
 Subscribe a device to topics using the [Pub/Sub Subscribe API](https://pushy.me/docs/api/pubsub-subscribe):
 
 ```js
-pushy.subscribe(['news', 'weather'], 'TOKEN', (err) => {
+pushy.subscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
     // Log errors to console
     if (err) {
         return console.log('Fatal Error', err);
@@ -145,7 +145,7 @@ pushy.subscribe(['news', 'weather'], 'TOKEN', (err) => {
 Unsubscribe a device from topics using the [Pub/Sub Unsubscribe API](https://pushy.me/docs/api/pubsub-unsubscribe)
 
 ```js
-pushy.unsubscribe(['news', 'weather'], 'TOKEN', (err) => {
+pushy.unsubscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
     // Log errors to console
     if (err) {
         return console.log('Fatal Error', err);
@@ -161,31 +161,30 @@ Fetch device info, presence, undelivered notifications, and more by device token
 
 
 ```js
-pushy.getDeviceInfo('TOKEN', (err, deviceInfo) => {
-
+pushy.getDeviceInfo('DEVICE_TOKEN', (err, deviceInfo) => {
     // Log errors to console
     if (err) {
         console.log(err);
     }
 
-    // Log Device Information
+    // Log device info
     console.log('Device Info: ', deviceInfo);
 });
 ```
-## pushy.getDevicesPresence(devicesTokens)
+## pushy.getDevicePresence(devicesTokens)
 
 Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
 
 ```js
-    pushy.getDevicesPresence(['TOKEN'], (err, devicesInfo) => {
-        // Log errors to console
-        if (err) {
-            console.log(err);
-        }
+pushy.getDevicePresence(['DEVICE_TOKEN', 'DEVICE_TOKEN_2'], (err, devicePresence) => {
+    // Log errors to console
+    if (err) {
+        console.log(err);
+    }
 
-        // Log Device Information
-        console.log('Device Info: ', devicesInfo);
-    });
+    // Log device presence
+    console.log('Device Presence: ', devicePresence);
+});
 ```
 ## License
 
