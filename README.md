@@ -5,7 +5,7 @@ The official Node.js package for sending push notifications with [Pushy](https:/
 
 > [Pushy](https://pushy.me/) is the most reliable push notification gateway, perfect for real-time, mission-critical applications.
 
-**Note:** If you don't have an existing Node.js project, consider using our [sample Node.js API project](https://github.com/pushy-me/pushy-node-backend) as a starting point to make things easier for you.
+**Note:** If you don't have an existing Node.js project, consider using our [Node.js backend API sample project](https://github.com/pushy-me/pushy-node-backend) as a starting point to make things easier for you.
 
 ## Usage
 
@@ -15,13 +15,13 @@ First, install the package using npm:
 npm install pushy --save
 ```
 
-Then, use the following code to send a push notification to target devices:
+Then, use the following code to send a push notification to target devices using the [Send Notifications API](https://pushy.me/docs/api/send-notifications):
 
 ```js
 var Pushy = require('pushy');
 
 // Plug in your Secret API Key
-// Get it here: https://dashboard.pushy.me/
+// Get it from the Pushy Dashboard: https://dashboard.pushy.me/apps
 var pushy = new Pushy('SECRET_API_KEY');
 
 // Set push payload data to deliver to device(s)
@@ -29,8 +29,8 @@ var data = {
     message: 'Hello World!'
 };
 
-// Insert target device token(s) here
-var tokens = ['DEVICE_TOKEN'];
+// Insert target device token(s), or set to Pub/Sub topic
+var to = ['DEVICE_TOKEN'];
 
 // Set optional push notification options (such as iOS notification fields)
 var options = {
@@ -41,12 +41,11 @@ var options = {
     },
 };
 
-// Send push notification via the Send Notifications API
-// https://pushy.me/docs/api/send-notifications
-pushy.sendPushNotification(data, tokens, options, function (err, id) {
+// Send push notification using the Send Notifications API
+pushy.sendPushNotification(data, to, options, function (err, id) {
     // Log errors to console
     if (err) {
-        return console.log('Fatal Error', err);
+        return console.error(err);
     }
     
     // Log success
@@ -54,7 +53,11 @@ pushy.sendPushNotification(data, tokens, options, function (err, id) {
 });
 ```
 
-Alternatively, send the notification using promises:
+**Note:** Make sure to replace `SECRET_API_KEY` with your app's Secret API Key, available in the [Pushy Dashboard](https://dashboard.pushy.me/apps) (Click your app -> API Authentication tab). 
+
+--- 
+
+The library also supports using promise syntax instead of callbacks for all API methods:
 
 ```js
 pushy.sendPushNotification(data, tokens, options)
@@ -63,44 +66,107 @@ pushy.sendPushNotification(data, tokens, options)
         console.log('Push sent successfully! (ID: ' + id + ')');
     }).catch(function (err) {
         // Log errors to console
-        return console.log(err);
+        return console.error(err);
     });
 ```
-
-Make sure to replace `SECRET_API_KEY` with your app's Secret API Key listed in the [Dashboard](https://dashboard.pushy.me/). 
 
 ---
 
-# Additional API Methods
+# Push APIs
+
+## pushy.sendPushNotification(data, to, options)
+
+Instantly send push notifications to your users using the [Send Notifications API](https://pushy.me/docs/api/send-notifications) (see example above):
+
+```js
+pushy.sendPushNotification(data, to, options, function (err, id) {
+    // Log errors to console
+    if (err) {
+        return console.error(err);
+    }
+    
+    // Log success
+    console.log('Push sent successfully! (ID: ' + id + ')');
+});
+```
+
+## pushy.getNotificationStatus(pushId)
+
+Check the delivery status of your push notifications using the [Notification Status API](https://pushy.me/docs/api/notification-status):
+
+```js
+pushy.getNotificationStatus('PUSH_ID', function (err, status) {
+    // Log errors to console
+    if (err) {
+        return console.error(err);
+    }
+
+    // Log notification status
+    console.log('Notification Status: ', JSON.stringify(status, null, 2));
+});
+```
 
 ## pushy.deletePushNotification(pushId)
 
-Delete a notification using the [Notification Deletion API](https://pushy.me/docs/api/notification-deletion):
+Permanently delete a pending notification using the [Notification Deletion API](https://pushy.me/docs/api/notification-deletion):
 
 ```js
-// Unique push ID returned from pushy.sendPushNotification()
-var pushId = '5ea9b214b47cad768a35f13a';
+pushy.deletePushNotification('PUSH_ID', function (err) {
+    // Log errors to console
+    if (err) {
+        return console.error(err);
+    }
 
-// Delete the notification
-pushy.deletePushNotification(pushId)
-    .then(function (id) {
-        // Log success
-        console.log('Push deleted successfully!');
-    }).catch(function (err) {
-        // Log errors to console
-        return console.log(err);
-    });
+    // Log success
+    console.log('Pending notification deleted successfully');
+});
 ```
+
+# Device APIs
+
+## pushy.getDeviceInfo(deviceToken)
+
+Fetch device info, presence, undelivered notifications, and more by device token using the [Device Info API](https://pushy.me/docs/api/device).
+
+```js
+pushy.getDeviceInfo('DEVICE_TOKEN', function (err, deviceInfo) {
+    // Log errors to console
+    if (err) {
+        return console.error(err);
+    }
+
+    // Log device info
+    console.log('Device Info: ', JSON.stringify(deviceInfo, null, 2));
+});
+```
+
+## pushy.getDevicePresence(deviceTokens)
+
+Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
+
+```js
+pushy.getDevicePresence(['DEVICE_TOKEN', 'DEVICE_TOKEN_2'], function (err, devicePresence) {
+    // Log errors to console
+    if (err) {
+        return console.error(err);
+    }
+
+    // Log device presence array
+    console.log('Device Presence: ', JSON.stringify(devicePresence, null, 2));
+});
+```
+
+# Pub/Sub APIs
 
 ## pushy.getTopics()
 
 Retrieve a list of your app's topics and subscribers count using the [Pub/Sub Topics API](https://pushy.me/docs/api/pubsub-topics):
 
 ```js
-pushy.getTopics((err, topics) => {
+pushy.getTopics(function (err, topics) {
     // Log errors to console
     if (err) {
-        return console.log('Fatal Error', err);
+        return console.error(err);
     }
 
     // Log subscribed topics
@@ -113,10 +179,10 @@ pushy.getTopics((err, topics) => {
 Retrieve a list of devices subscribed to a certain topic using the [Pub/Sub Subscribers API](https://pushy.me/docs/api/pubsub-subscribers):
 
 ```js
-pushy.getSubscribers('news', (err, subscribers) => {
+pushy.getSubscribers('news', function (err, subscribers) {
     // Log errors to console
     if (err) {
-        return console.log('Fatal Error', err);
+        return console.error(err);
     }
 
     // Log subscribed devices
@@ -126,13 +192,13 @@ pushy.getSubscribers('news', (err, subscribers) => {
 
 ## pushy.subscribe(topics, deviceToken)
 
-Subscribe a device to topics using the [Pub/Sub Subscribe API](https://pushy.me/docs/api/pubsub-subscribe):
+Subscribe a device to one or more topics using the [Pub/Sub Subscribe API](https://pushy.me/docs/api/pubsub-subscribe):
 
 ```js
-pushy.subscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
+pushy.subscribe(['news', 'weather'], 'DEVICE_TOKEN', function (err) {
     // Log errors to console
     if (err) {
-        return console.log('Fatal Error', err);
+        return console.error(err);
     }
 
     // Log success
@@ -142,13 +208,13 @@ pushy.subscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
 
 ## pushy.unsubscribe(topics, deviceToken)
 
-Unsubscribe a device from topics using the [Pub/Sub Unsubscribe API](https://pushy.me/docs/api/pubsub-unsubscribe)
+Unsubscribe a device from one or more topics using the [Pub/Sub Unsubscribe API](https://pushy.me/docs/api/pubsub-unsubscribe)
 
 ```js
-pushy.unsubscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
+pushy.unsubscribe(['news', 'weather'], 'DEVICE_TOKEN', function (err) {
     // Log errors to console
     if (err) {
-        return console.log('Fatal Error', err);
+        return console.error(err);
     }
 
     // Log success
@@ -156,36 +222,6 @@ pushy.unsubscribe(['news', 'weather'], 'DEVICE_TOKEN', (err) => {
 });
 ```
 
-## pushy.getDeviceInfo(deviceToken)
-Fetch device info, presence, undelivered notifications, and more by device token using [Device Info API](https://pushy.me/docs/api/device).
-
-
-```js
-pushy.getDeviceInfo('DEVICE_TOKEN', (err, deviceInfo) => {
-    // Log errors to console
-    if (err) {
-        console.log(err);
-    }
-
-    // Log device info
-    console.log('Device Info: ', deviceInfo);
-});
-```
-## pushy.getDevicePresence(devicesTokens)
-
-Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
-
-```js
-pushy.getDevicePresence(['DEVICE_TOKEN', 'DEVICE_TOKEN_2'], (err, devicePresence) => {
-    // Log errors to console
-    if (err) {
-        console.log(err);
-    }
-
-    // Log device presence
-    console.log('Device Presence: ', devicePresence);
-});
-```
 ## License
 
 [Apache 2.0](LICENSE)
