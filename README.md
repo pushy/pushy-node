@@ -126,7 +126,7 @@ pushy.deletePushNotification('PUSH_ID', function (err) {
 
 ## pushy.getDeviceInfo(deviceToken)
 
-Fetch device info, presence, undelivered notifications, and more by device token using the [Device Info API](https://pushy.me/docs/api/device).
+Fetch device info, presence, undelivered notifications, and more by device token using the [Device Info API](https://pushy.me/docs/api/device):
 
 ```js
 pushy.getDeviceInfo('DEVICE_TOKEN', function (err, deviceInfo) {
@@ -142,7 +142,7 @@ pushy.getDeviceInfo('DEVICE_TOKEN', function (err, deviceInfo) {
 
 ## pushy.getDevicePresence(deviceTokens)
 
-Check the presence and connectivity status of multiple devices using [Device Presence API](https://pushy.me/docs/api/device-presence)
+Check the presence and connectivity status of multiple devices using the [Device Presence API](https://pushy.me/docs/api/device-presence):
 
 ```js
 pushy.getDevicePresence(['DEVICE_TOKEN', 'DEVICE_TOKEN_2'], function (err, devicePresence) {
