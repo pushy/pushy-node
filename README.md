@@ -1,5 +1,5 @@
 # pushy-node
-[![npm version](https://badge.fury.io/js/pushy.svg)](https://www.npmjs.com/package/pushy)
+[![npm version](https://badge.fury.io/js/pushy.svg)](https://www.npmjs.com/package/pushy-bulk-topic-subscriber)
 
 The official Node.js package for sending push notifications with [Pushy](https://pushy.me/).
 
