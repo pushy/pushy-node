@@ -1,5 +1,4 @@
 var request = require('request');
-var Promise = require('bluebird');
 
 // Pub/Sub Subscribers API
 module.exports = function (topic, callback) {

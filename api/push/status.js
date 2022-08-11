@@ -1,5 +1,4 @@
 var request = require('request');
-var Promise = require('bluebird');
 
 // Notification Status API
 module.exports = function (pushId, callback) {

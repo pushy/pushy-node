@@ -1,5 +1,4 @@
 var request = require('request');
-var Promise = require('bluebird');
 
 // Device Presence API
 module.exports = function (deviceTokens, callback) {
