@@ -1,5 +1,4 @@
-var request = require('request');
-var Promise = require('bluebird');
+var axios = require('axios');
 
 // Send Notifications API
 module.exports = function (data, recipient, options, callback) {
@@ -59,17 +58,14 @@ module.exports = function (data, recipient, options, callback) {
         }
 
         // Make a request to the Send Notifications API
-        request(
+        axios(
             Object.assign({
-                uri: that.getApiEndpoint() + '/push?api_key=' + that.apiKey,
+                url: that.getApiEndpoint() + '/push?api_key=' + that.apiKey,
                 method: 'POST',
-                json: postData
-            }, that.extraRequestOptions || {}), function (err, res, body) {
-                // Request error?
-                if (err) {
-                    // Send to callback
-                    return reject(err);
-                }
+                data: postData
+            }, that.extraRequestOptions || {})).then(function (res) {
+                // API response
+                var body = res.data;
 
                 // Missing body?
                 if (!body) {
@@ -82,7 +78,7 @@ module.exports = function (data, recipient, options, callback) {
                 }
 
                 // Check for 200 OK
-                if (res.statusCode != 200) {
+                if (res.status != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
 
@@ -94,6 +90,14 @@ module.exports = function (data, recipient, options, callback) {
                 else {
                     // Resolve the promise with response body
                     resolve(body);
+                }
+            }).catch(function (err) {
+                // Invoke callback/reject promise with Pushy error
+                if (err.response && err.response.data) {
+                    reject(err.response.data);
+                }
+                else {
+                    reject(err);
                 }
             });
     });
