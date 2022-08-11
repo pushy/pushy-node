@@ -134,7 +134,7 @@ declare module 'pushy' {
             date: number;
 
             /**  The device platform string identifier. */
-            platform: 'android' | 'ios' | 'web';
+            platform: 'android' | 'ios' | 'web' | 'electron' | 'python';
         };
 
         /** Information about the device's presence and last communication. */
