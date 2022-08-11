@@ -1,4 +1,4 @@
-var request = require('request');
+var axios = require('axios');
 
 // Pub/Sub Topics API
 module.exports = function (callback) {
@@ -14,17 +14,14 @@ module.exports = function (callback) {
         }
 
         // Make a request to the Pub/Sub Topics API
-        request(
+        axios(
             Object.assign({
-                uri: that.getApiEndpoint() + '/topics/' + '?api_key=' + that.apiKey,
+                url: that.getApiEndpoint() + '/topics/' + '?api_key=' + that.apiKey,
                 method: 'GET',
                 json: true
-            }, that.extraRequestOptions || {}), function (err, res, body) {
-                // Request error?
-                if (err) {
-                    // Send to callback
-                    return reject(err);
-                }
+            }, that.extraRequestOptions || {})).then(function (res) {
+                // API response
+                var body = res.data;
 
                 // Missing body?
                 if (!body) {
@@ -37,7 +34,7 @@ module.exports = function (callback) {
                 }
 
                 // Check for 200 OK
-                if (res.statusCode != 200) {
+                if (res.status != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
 
@@ -52,6 +49,14 @@ module.exports = function (callback) {
                 else {
                     // Resolve the promise
                     resolve(body);
+                }
+            }).catch(function (err) {
+                // Invoke callback/reject promise with Pushy error
+                if (err.response && err.response.data) {
+                    reject(err.response.data);
+                }
+                else {
+                    reject(err);
                 }
             });
     });

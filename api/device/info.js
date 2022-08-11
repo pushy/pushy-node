@@ -1,4 +1,4 @@
-var request = require('request');
+var axios = require('axios');
 
 // Device Info API
 module.exports = function (deviceToken, callback) {
@@ -19,17 +19,14 @@ module.exports = function (deviceToken, callback) {
         }
 
         // Make a request to the Device Info API
-        request(
+        axios(
             Object.assign({
-                uri: that.getApiEndpoint() + '/devices/' + deviceToken + '?api_key=' + that.apiKey,
+                url: that.getApiEndpoint() + '/devices/' + deviceToken + '?api_key=' + that.apiKey,
                 method: 'GET',
                 json: true
-            }, that.extraRequestOptions || {}), function (err, res, body) {
-                // Request error?
-                if (err) {
-                    // Send to callback
-                    return reject(err);
-                }
+            }, that.extraRequestOptions || {})).then(function (res) {
+                // API response
+                var body = res.data;
 
                 // Missing body?
                 if (!body) {
@@ -42,7 +39,7 @@ module.exports = function (deviceToken, callback) {
                 }
 
                 // Check for 200 OK
-                if (res.statusCode != 200) {
+                if (res.status != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
 
@@ -57,6 +54,14 @@ module.exports = function (deviceToken, callback) {
                 else {
                     // Resolve the promise
                     resolve(deviceInfo);
+                }
+            }).catch(function (err) {
+                // Invoke callback/reject promise with Pushy error
+                if (err.response && err.response.data) {
+                    reject(err.response.data);
+                }
+                else {
+                    reject(err);
                 }
             });
     });

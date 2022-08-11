@@ -1,4 +1,4 @@
-var request = require('request');
+var axios = require('axios');
 
 // Pub/Sub Subscribe API
 module.exports = function (topics, deviceToken, callback) {
@@ -33,17 +33,14 @@ module.exports = function (topics, deviceToken, callback) {
         postData.topics = Array.isArray(topics) ? topics : [topics];
 
         // Make a request to the Pub/Sub Subscribe API
-        request(
+        axios(
             Object.assign({
-                uri: that.getApiEndpoint() + '/topics/subscribe/' + '?api_key=' + that.apiKey,
+                url: that.getApiEndpoint() + '/topics/subscribe/' + '?api_key=' + that.apiKey,
                 method: 'POST',
-                json: postData
-            }, that.extraRequestOptions || {}), function (err, res, body) {
-                // Request error?
-                if (err) {
-                    // Send to callback
-                    return reject(err);
-                }
+                data: postData
+            }, that.extraRequestOptions || {})).then(function (res) {
+                // API response
+                var body = res.data;
 
                 // Missing body?
                 if (!body) {
@@ -56,7 +53,7 @@ module.exports = function (topics, deviceToken, callback) {
                 }
 
                 // Check for 200 OK
-                if (res.statusCode != 200) {
+                if (res.status != 200) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
 
@@ -68,6 +65,14 @@ module.exports = function (topics, deviceToken, callback) {
                 else {
                     // Resolve the promise successfully
                     resolve();
+                }
+            }).catch(function (err) {
+                // Invoke callback/reject promise with Pushy error
+                if (err.response && err.response.data) {
+                    reject(err.response.data);
+                }
+                else {
+                    reject(err);
                 }
             });
     });
