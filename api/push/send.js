@@ -86,17 +86,14 @@ module.exports = function (data, recipient, options, callback) {
                     return reject(new Error('An invalid response code was received from the Pushy API.'));
                 }
 
-                // Fetch push notification ID
-                var pushId = body.id;
-
                 // Callback?
                 if (callback) {
-                    // Pass push ID to callback with a null error
-                    callback(null, pushId);
+                    // Pass response body to callback with a null error
+                    callback(null, body);
                 }
                 else {
-                    // Resolve the promise
-                    resolve(pushId);
+                    // Resolve the promise with response body
+                    resolve(body);
                 }
             });
     });

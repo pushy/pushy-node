@@ -23,14 +23,14 @@ var options = {
 };
 
 // Send push notification using the Send Notifications API
-pushy.sendPushNotification(data, to, options, function (err, id) {
+pushy.sendPushNotification(data, to, options, function (err, result) {
     // Log errors to console
     if (err) {
         return console.error(err);
     }
 
     // Log success
-    console.log('Push sent successfully! (ID: ' + id + ')');
+    console.log('Push sent successfully! (ID: ' + result.id + ')');
 });
 
 // Check the delivery status of your push notifications using the Notification Status API

@@ -42,14 +42,14 @@ var options = {
 };
 
 // Send push notification using the Send Notifications API
-pushy.sendPushNotification(data, to, options, function (err, id) {
+pushy.sendPushNotification(data, to, options, function (err, result) {
     // Log errors to console
     if (err) {
         return console.error(err);
     }
     
     // Log success
-    console.log('Push sent successfully! (ID: ' + id + ')');
+    console.log('Push sent successfully! (ID: ' + result.id + ')');
 });
 ```
 
@@ -61,9 +61,9 @@ The library also supports using promise syntax instead of callbacks for all API 
 
 ```js
 pushy.sendPushNotification(data, tokens, options)
-    .then(function (id) {
+    .then(function (result) {
         // Log success
-        console.log('Push sent successfully! (ID: ' + id + ')');
+        console.log('Push sent successfully! (ID: ' + result.id + ')');
     }).catch(function (err) {
         // Log errors to console
         return console.error(err);
@@ -79,14 +79,14 @@ pushy.sendPushNotification(data, tokens, options)
 Instantly send push notifications to your users using the [Send Notifications API](https://pushy.me/docs/api/send-notifications) (see example above):
 
 ```js
-pushy.sendPushNotification(data, to, options, function (err, id) {
+pushy.sendPushNotification(data, to, options, function (err, result) {
     // Log errors to console
     if (err) {
         return console.error(err);
     }
     
     // Log success
-    console.log('Push sent successfully! (ID: ' + id + ')');
+    console.log('Push sent successfully! (ID: ' + result.id + ')');
 });
 ```
 
