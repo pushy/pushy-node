@@ -252,7 +252,10 @@ declare module 'pushy' {
          *
          * @param pushId
          */
-        getNotificationStatus(pushId: string): Promise<NotificationStatus>;
+        getNotificationStatus(
+            pushId: string,
+            callback?: (error: Error | null, status: NotificationStatus) => void
+        ): Promise<NotificationStatus>;
 
         /**
          * Permanently delete a pending notification.
@@ -260,7 +263,7 @@ declare module 'pushy' {
          *
          * @param pushId
          */
-        deletePushNotification(pushId: string): Promise<void>;
+        deletePushNotification(pushId: string, callback?: (error: Error | null) => void): Promise<void>;
 
         /**
          * Check the presence and connectivity status of multiple devices.
@@ -268,7 +271,10 @@ declare module 'pushy' {
          *
          * @param deviceTokens
          */
-        getDevicePresence(deviceTokens: string | Array<string>): Promise<Array<DevicePresenceInfo>>;
+        getDevicePresence(
+            deviceTokens: string | Array<string>,
+            callback?: (error: Error | null, presence: Array<DevicePresenceInfo>) => void
+        ): Promise<Array<DevicePresenceInfo>>;
 
         /**
          * Fetch device info, presence, undelivered notifications, and more by device token.
@@ -277,7 +283,10 @@ declare module 'pushy' {
          *
          * @param deviceToken
          */
-        getDeviceInfo(deviceToken: string): Promise<DeviceInfo>;
+        getDeviceInfo(
+            deviceToken: string,
+            callback?: (error: Error | null, device: DeviceInfo) => void
+        ): Promise<DeviceInfo>;
 
         /**
          * Subscribe a device to one or more topics.
@@ -286,7 +295,11 @@ declare module 'pushy' {
          * @param topics
          * @param deviceToken
          */
-        subscribe(topics: string | Array<string>, deviceToken: string): Promise<void>;
+        subscribe(
+            topics: string | Array<string>,
+            deviceToken: string,
+            callback?: (error: Error | null) => void
+        ): Promise<void>;
 
         /**
          * Unsubscribe a device from one or more topics.
@@ -295,7 +308,11 @@ declare module 'pushy' {
          * @param topics
          * @param deviceToken
          */
-        unsubscribe(topics: string | Array<string>, deviceToken: string): Promise<void>;
+        unsubscribe(
+            topics: string | Array<string>,
+            deviceToken: string,
+            callback?: (error: Error | null) => void
+        ): Promise<void>;
 
         /**
          * Retrieve a list of your app's topics and subscribers count.
@@ -309,6 +326,9 @@ declare module 'pushy' {
          *
          * @param topic The Pub/Sub topic to retrieve subscribers for. Topics are case-sensitive and must match the following regular expression: [a-zA-Z0-9-_.]+.
          */
-        getSubscribers(topic: string): Promise<TopicSuscribers>;
+        getSubscribers(
+            topic: string,
+            callback?: (error: Error | null, subscribers: TopicSuscribers) => void
+        ): Promise<TopicSuscribers>;
     }
 }
