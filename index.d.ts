@@ -242,7 +242,8 @@ declare module 'pushy' {
         sendPushNotification(
             data: unknown,
             recipient: string | Array<string>,
-            options?: SendPushNotificationOptions
+            options?: SendPushNotificationOptions,
+            callback?: (error: Error | null, pushId: string) => void
         ): Promise<string>;
 
         /**
