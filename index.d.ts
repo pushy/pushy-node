@@ -110,6 +110,33 @@ declare module 'pushy' {
         };
     }
 
+    interface SendPushNotificationResult {
+        /** Returned if the API request was successful.	 */
+        success: boolean;
+
+        /**
+         * The push notification unique ID.
+         *
+         * Use it to check delivery status using the Notification Status API.
+         */
+        id: string;
+
+        /**
+         * Contains additional information about the notification, for debugging purposes.
+         */
+        info: {
+            /**
+             * The number of devices that will potentially receive the notification.
+             */
+            devices: number;
+
+            /**
+             * An array of invalid device tokens passed in which could not be found in our
+             * database registered under the app with the Secret API Key used to authenticate this request.
+             */
+            failed: Array<string>;
+        };
+    }
     interface NotificationStatus {
         /** The creation date of the push notification (unix timestamp). */
         date: number;
@@ -243,8 +270,8 @@ declare module 'pushy' {
             data: unknown,
             recipient: string | Array<string>,
             options?: SendPushNotificationOptions,
-            callback?: (error: Error | null, pushId: string) => void
-        ): Promise<string>;
+            callback?: (error: Error | null, result: SendPushNotificationResult) => void
+        ): Promise<SendPushNotificationResult>;
 
         /**
          * Check the delivery status of your push notifications to Android / Electron recipients.
