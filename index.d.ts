@@ -269,7 +269,7 @@ declare module 'pushy' {
         sendPushNotification(
             data: unknown,
             recipient: string | Array<string>,
-            options?: SendPushNotificationOptions,
+            options?: Partial<SendPushNotificationOptions>,
             callback?: (error: Error | null, result: SendPushNotificationResult) => void
         ): Promise<SendPushNotificationResult>;
 
