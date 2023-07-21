@@ -345,7 +345,7 @@ declare module 'pushy' {
          * Retrieve a list of your app's topics and subscribers count.
          * @see {@link https://pushy.me/docs/api/pubsub-topics}
          */
-        getTopics(): Promise<Array<TopicStatus>>;
+        getTopics(): Promise<{topics: TopicStatus[]}>;
 
         /**
          * Retrieve a list of devices subscribed to a certain topic.
