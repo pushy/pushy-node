@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/pushy/pushy-node#readme",
   "dependencies": {
-    "axios": "^0.28.0"
+    "axios": "^1.7.3"
   }
 }
