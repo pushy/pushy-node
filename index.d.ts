@@ -137,6 +137,7 @@ declare module 'pushy' {
             failed: Array<string>;
         };
     }
+
     interface NotificationStatus {
         /** The creation date of the push notification (unix timestamp). */
         date: number;
@@ -214,6 +215,26 @@ declare module 'pushy' {
         subscriptions: Array<string>;
     }
 
+    /**
+     * Options for extra request library parameters.
+     */
+    interface ExtraRequestOptions {
+        /** 
+         * Custom headers for the request, represented as key-value pairs. 
+         */
+        headers?: Record<string, string>;
+
+        /** 
+         * Timeout for the request in milliseconds. 
+         */
+        timeout?: number; 
+
+        /** 
+         * Allow any additional options to be specified. 
+         */
+        [key: string]: any; 
+    }
+
     interface DevicePresenceInfo {
         /** The device token linked to this presence object. */
         id: string;
@@ -254,6 +275,12 @@ declare module 'pushy' {
     }
 
     export default class Pushy {
+        /**
+         * Constructor
+         * @see {@link https://pushy.me/docs/api}
+         *
+         * @param apiKey Pushy Secret API Key, available in the Pushy Dashboard (Click your app -> API Authentication tab).
+         */
         constructor(apiKey: string);
 
         /**
@@ -357,5 +384,26 @@ declare module 'pushy' {
             topic: string,
             callback?: (error: Error | null, subscribers: TopicSuscribers) => void
         ): Promise<TopicSuscribers>;
+
+        /**
+         * Set extra request library options to customize requests sent to the Pushy API.
+         * 
+         * @param options An object containing additional request options.
+         */
+        setExtraRequestOptions(options: ExtraRequestOptions): void;
+
+        /**
+         * Set the Pushy Enterprise API endpoint hostname.
+         *
+         * @param endpoint The Pushy Enterprise API endpoint along with protocol (no trailing slash).
+         */
+        setEnterpriseConfig(endpoint: string): void;
+
+        /**
+         * Get the API endpoint being used by the Pushy instance.
+         * 
+         * @returns The API endpoint URL as a string.
+         */
+        getApiEndpoint(): string;
     }
 }
