@@ -45,25 +45,25 @@ declare module 'pushy' {
              * The main alert message, visible on the lock screen and in other areas on iOS.
              * Supports Apple Emojis via their unicode representation.
              */
-            body: string;
+            body?: string;
 
             /**  The number to display as the badge of the app icon. */
-            badge: number;
+            badge?: number;
 
             /**
              * The filename of a sound in the app bundle or in the Library/Sounds folder of your app's data
              * container, or a sound dictionary object for critical alerts (iOS 12, more info) .
              */
-            sound: unknown;
+            sound?: unknown;
 
             /**  A short string describing the purpose of the notification, visible on Apple Watch and iOS 8.2+. */
-            title: string;
+            title?: string;
 
             /**
              * Your app's Notification Content Extension with the matching category will be invoked in order to
              * display custom notification UI.
              */
-            category: string;
+            category?: string;
 
             /**
              * The localization key of a string present in your app's Localizable.strings file.
@@ -71,7 +71,7 @@ declare module 'pushy' {
              * Use this parameter to localize the notification body. Refer to the APNs documentation for more
              * information.
              */
-            loc_key: string;
+            loc_key?: string;
 
             /**
              * The replacement strings to substitute in place of the %@ placeholders of the localization string
@@ -80,7 +80,7 @@ declare module 'pushy' {
              * Use this parameter to localize the notification body. Refer to the APNs documentation for more
              * information.
              */
-            loc_args: Array<string>;
+            loc_args?: Array<string>;
 
             /**
              * The localization key of a string present in your app's Localizable.strings file.
@@ -88,7 +88,7 @@ declare module 'pushy' {
              * Use this parameter to localize the notification title. Refer to the APNs documentation for more
              * information.
              */
-            title_loc_key: string;
+            title_loc_key?: string;
 
             /**
              * The replacement strings to substitute in place of the %@ placeholders of the localization string
@@ -97,7 +97,7 @@ declare module 'pushy' {
              * Use this parameter to localize the notification title. Refer to the APNs documentation for more
              * information.
              */
-            title_loc_args: Array<string>;
+            title_loc_args?: Array<string>;
 
             /**
              * Indicate the importance and delivery timing of a notification on iOS 15+, with possible values
@@ -106,7 +106,7 @@ declare module 'pushy' {
              * Defaults to active. Anything above active requires capabilities to be enabled in your Xcode
              * project. Refer to the APNs documentation for more information.
              */
-            interruption_level: string;
+            interruption_level?: string;
         };
     }
 
